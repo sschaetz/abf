@@ -18,4 +18,4 @@ The tool supports [Google Cloud Composer](https://cloud.google.com/composer) as 
 
 If the GUI extension [quick](https://github.com/szsdk/quick) is available on your system, you will be able to use the `--gui` flag to launch a GUI:
 
-![Airflow Backfill Tool GUI](https://github.com/sschaetz/abf/blob/main/doc/af_bf.png?raw=true)
+![Airflow Backfill Tool GUI](https://raw.githubusercontent.com/sschaetz/abf/main/docs/af_bf.png)
