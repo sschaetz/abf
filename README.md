@@ -1,5 +1,7 @@
 ## abf - Airflow Backfill Tool
 
+[![abf - Airflow Backfill Tool](https://github.com/sschaetz/abf/actions/workflows/pipeline.yml/badge.svg)](https://github.com/sschaetz/abf/actions/workflows/pipeline.yml)
+
 ### About
 
 This command line tool can issue backfill commands to Airflow in small portions. The [Airflow](https://airflow.apache.org/) (1.0) scheduler can be knocked out easily if backfill commands are executed that request many DAG instanced to be backfilled.
