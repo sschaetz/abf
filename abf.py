@@ -3,6 +3,7 @@
 
 import logging
 import os
+import re
 import subprocess
 from datetime import timedelta
 
@@ -17,6 +18,17 @@ __copyright__ = "Copyright 2021 (C) Sebastian Schaetz"
 def cli(ctx):
     ctx.ensure_object(dict)
     logging.basicConfig(level=logging.INFO)
+
+
+def hour_day_to_timedelta(s: str):
+    p = re.compile(r"(\d{1,2}(H|h))|(\d{1,3}(D|d))")
+    if p.match(s) is None:
+        raise ValueError(f"'{s}' is not a valid string")
+    s = s.upper()
+    if s[-1] == "H":
+        return timedelta(hours=int(s[0:-1]))
+    if s[-1] == "D":
+        return timedelta(days=int(s[0:-1]))
 
 
 def split_timespan(start_dt, end_dt, td):
@@ -48,6 +60,13 @@ def split_timespan(start_dt, end_dt, td):
 @click.option("-d", "--dag", type=str)
 @click.option("-t", "--task-regex", type=str, default=None)
 @click.option("-dr", "--dry_run", is_flag=True, help="Dry run.")
+@click.option(
+    "--interval",
+    type=str,
+    default="6h",
+    help="Specify the interval to split up the timespan. "
+    "Either hours (example: 4h) or days (example (1d).",
+)
 def cb_gcp(
     ctx,
     start_dt,
@@ -58,11 +77,10 @@ def cb_gcp(
     dag,
     task_regex,
     dry_run,
+    interval,
 ):
-    # TODO: add execution interval; currently defaults to 6 hours
-
     intervals = split_timespan(
-        start_dt=start_dt, end_dt=end_dt, td=timedelta(hours=6),
+        start_dt=start_dt, end_dt=end_dt, td=hour_day_to_timedelta(interval),
     )
 
     commands = []
@@ -98,11 +116,18 @@ def cb_gcp(
 @click.option("-l", "--location", type=str)
 @click.option("-t", "--task-regex", type=str, default=None)
 @click.option("-dr", "--dry_run", is_flag=True, help="Dry run.")
+@click.option(
+    "--interval",
+    type=str,
+    default="6h",
+    help="Specify the interval to split up the timespan. "
+    "Either hours (example: 4h) or days (example (1d).",
+)
 def cb(
-    ctx, start_dt, end_dt, dag, task_regex, dry_run,
+    ctx, start_dt, end_dt, dag, task_regex, dry_run, interval,
 ):
     intervals = split_timespan(
-        start_dt=start_dt, end_dt=end_dt, td=timedelta(hours=6),
+        start_dt=start_dt, end_dt=end_dt, td=hour_day_to_timedelta(interval),
     )
 
     commands = []
