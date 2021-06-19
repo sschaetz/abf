@@ -80,7 +80,9 @@ def cb_gcp(
     interval,
 ):
     intervals = split_timespan(
-        start_dt=start_dt, end_dt=end_dt, td=hour_day_to_timedelta(interval),
+        start_dt=start_dt,
+        end_dt=end_dt,
+        td=hour_day_to_timedelta(interval),
     )
 
     commands = []
@@ -92,11 +94,11 @@ def cb_gcp(
                 f"--project {project}",
                 f"--location {location}",
                 f"{af_cmd}",
-                f"--",
+                "--",
                 f"{dag}",
                 f"-s {ival[0].strftime('%Y-%m-%dT%H:%M')}",
                 f"-e {ival[1].strftime('%Y-%m-%dT%H:%M')}",
-                f"-y",
+                "-y",
             ]
             if task_regex is not None:
                 cmd.append(f'--task_regex "{task_regex}"')
@@ -124,10 +126,18 @@ def cb_gcp(
     "Either hours (example: 4h) or days (example (1d).",
 )
 def cb(
-    ctx, start_dt, end_dt, dag, task_regex, dry_run, interval,
+    ctx,
+    start_dt,
+    end_dt,
+    dag,
+    task_regex,
+    dry_run,
+    interval,
 ):
     intervals = split_timespan(
-        start_dt=start_dt, end_dt=end_dt, td=hour_day_to_timedelta(interval),
+        start_dt=start_dt,
+        end_dt=end_dt,
+        td=hour_day_to_timedelta(interval),
     )
 
     commands = []
@@ -139,7 +149,7 @@ def cb(
                 f"{dag}",
                 f"-s {ival[0].strftime('%Y-%m-%dT%H:%M')}",
                 f"-e {ival[1].strftime('%Y-%m-%dT%H:%M')}",
-                f"-y",
+                "-y",
             ]
             if task_regex is not None:
                 cmd.append(f'--task_regex "{task_regex}"')
