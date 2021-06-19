@@ -1,5 +1,4 @@
 """This is an airflow backfill helper tool.
-
 """
 
 import logging
@@ -39,7 +38,7 @@ def split_timespan(start_dt, end_dt, td):
     return intervals
 
 
-@cli.command(help="clean and backfill GCP Composer")
+@cli.command(help="Clean and Backfill GCP Composer")
 @click.pass_context
 @click.option("-s", "--start_dt", type=click.DateTime())
 @click.option("-e", "--end_dt", type=click.DateTime())
@@ -90,7 +89,42 @@ def cb_gcp(
 
     for cmd in tqdm(commands):
         subprocess.run(cmd, env=os.environ.copy())
-        print(" ".join(cmd))
+
+
+@cli.command(help="Clean and Backfill Airflow")
+@click.pass_context
+@click.option("-s", "--start_dt", type=click.DateTime())
+@click.option("-e", "--end_dt", type=click.DateTime())
+@click.option("-l", "--location", type=str)
+@click.option("-t", "--task-regex", type=str, default=None)
+@click.option("-dr", "--dry_run", is_flag=True, help="Dry run.")
+def cb(
+    ctx, start_dt, end_dt, dag, task_regex, dry_run,
+):
+    intervals = split_timespan(
+        start_dt=start_dt, end_dt=end_dt, td=timedelta(hours=6),
+    )
+
+    commands = []
+    for ival in intervals:
+        for af_cmd in ["clear", "backfill"]:
+            cmd = [
+                "airflow",
+                f"{af_cmd}",
+                f"{dag}",
+                f"-s {ival[0].strftime('%Y-%m-%dT%H:%M')}",
+                f"-e {ival[1].strftime('%Y-%m-%dT%H:%M')}",
+                f"-y",
+            ]
+            if task_regex is not None:
+                cmd.append(f'--task_regex "{task_regex}"')
+            if af_cmd == "backfill" and dry_run:
+                cmd.append("--dry_run")
+
+            commands.append(" ".join(cmd).split(" "))
+
+    for cmd in tqdm(commands):
+        subprocess.run(cmd, env=os.environ.copy())
 
 
 if __name__ == "__main__":
