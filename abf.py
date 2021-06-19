@@ -12,12 +12,24 @@ from tqdm import tqdm
 
 __copyright__ = "Copyright 2021 (C) Sebastian Schaetz"
 
+try:
+    from quick import gui_option
 
-@click.group()
-@click.pass_context
-def cli(ctx):
-    ctx.ensure_object(dict)
-    logging.basicConfig(level=logging.INFO)
+    @gui_option
+    @click.group()
+    @click.pass_context
+    def cli(ctx):
+        ctx.ensure_object(dict)
+        logging.basicConfig(level=logging.INFO)
+
+
+except ImportError:
+
+    @click.group()
+    @click.pass_context
+    def cli(ctx):
+        ctx.ensure_object(dict)
+        logging.basicConfig(level=logging.INFO)
 
 
 def hour_day_to_timedelta(s: str):
