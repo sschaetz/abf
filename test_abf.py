@@ -1,6 +1,13 @@
 from datetime import datetime, timedelta
 
-from abf import split_timespan
+from abf import hour_day_to_timedelta, split_timespan
+
+
+def test_hour_day_to_timedelta():
+    assert timedelta(hours=2) == hour_day_to_timedelta("2h")
+    assert timedelta(hours=2) == hour_day_to_timedelta("2H")
+    assert timedelta(days=2) == hour_day_to_timedelta("2d")
+    assert timedelta(days=2) == hour_day_to_timedelta("2D")
 
 
 def test_split_dates():
